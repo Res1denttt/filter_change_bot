@@ -13,6 +13,8 @@ public class Main {
         TimetableRepository timetableRepository = new TimetableRepository();
         FilterService filterService = new FilterService(timetableRepository);
         botsApi.registerBot(new Bot(filterService));
+
+        // comment
     }
 }
 
