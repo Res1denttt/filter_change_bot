@@ -22,14 +22,20 @@ public class TimetableRepository {
         return new JdbcTemplate(ds);
     }
 
+    /**
+     * Получает из базы данных дату последней замены фильтра
+     */
     public LocalDate loadDateOfChange(String userName) {
         return jdbcTemplate.queryForObject(
                 "SELECT date_of_change FROM timetable WHERE user_name = ?",
                 LocalDate.class,
                 userName
         );
-    } // Получает из БД дату последней замены фильтра
+    }
 
+    /**
+     * Проверяет, есть ли пользователь в базе данных
+     */
     public boolean isKnownUser(String userName){
         Integer count = jdbcTemplate.queryForObject(
                 "SELECT COUNT (user_name) FROM timetable WHERE user_name = ?",
@@ -37,7 +43,7 @@ public class TimetableRepository {
                 userName
         );
         return count != null && count > 0;
-    }// Идентификация
+    }
 
     /**
      * Обновляет дату замены фильтра в БД

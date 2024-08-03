@@ -10,6 +10,9 @@ public class FilterService {
         this.repository = timetableRepository;
     }
 
+    /**
+     * Обрабатывает сообщение
+     */
     public String handleMessage(String userName, String message) {
         if (message.trim().contains("Фильтры заменены")) {
             repository.saveDateOfChange(userName, parseDate(message));
@@ -18,7 +21,7 @@ public class FilterService {
         }
 
         if (!repository.isKnownUser(userName)) {
-            return "Когда вы менялм фильтры? Введите дату в формате: \"Фильтры заменены ГГГГ-ММ-ДД\"";
+            return "Когда вы меняли фильтры? Введите дату в формате: \"Фильтры заменены ГГГГ-ММ-ДД\"";
         }
 
         if (message.trim().contains("Когда менялись фильтры")) {

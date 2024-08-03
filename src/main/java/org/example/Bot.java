@@ -38,8 +38,11 @@ public class Bot extends TelegramLongPollingBot {
         } catch (Exception e) {
             e.printStackTrace();
         }
-    } // Реагирует на новые сообщения боту
+    }
 
+    /**
+     * Отправляет сообщение в телеграмме
+     */
     public void sendText(Long who, String what) {
         SendMessage sm = SendMessage.builder()
                 .chatId(who.toString())
@@ -51,5 +54,5 @@ public class Bot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
-    } // Отправляет сообщение в телеграмме
+    }
 }
