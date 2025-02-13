@@ -4,6 +4,10 @@ import org.postgresql.ds.PGSimpleDataSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class TimetableRepository {
     private final JdbcTemplate jdbcTemplate;
@@ -12,9 +16,9 @@ public class TimetableRepository {
         this.jdbcTemplate = createJdbcTemplate();
     }
 
-    private JdbcTemplate createJdbcTemplate(){
+    private JdbcTemplate createJdbcTemplate() {
         PGSimpleDataSource ds = new PGSimpleDataSource();
-        ds.setServerNames(new String[] {"localhost"});
+        ds.setServerNames(new String[]{"localhost"});
         ds.setDatabaseName("aqua_filter");
         ds.setUser("postgres");
         ds.setPassword("123456");
@@ -36,7 +40,7 @@ public class TimetableRepository {
     /**
      * Проверяет, есть ли пользователь в базе данных
      */
-    public boolean isKnownUser(String userName){
+    public boolean isKnownUser(String userName) {
         Integer count = jdbcTemplate.queryForObject(
                 "SELECT COUNT (user_name) FROM timetable WHERE user_name = ?",
                 Integer.class,
@@ -48,18 +52,30 @@ public class TimetableRepository {
     /**
      * Обновляет дату замены фильтра в БД
      */
-    public int saveDateOfChange(String userName, LocalDate date) {
+    public int saveDateOfChange(String userName, LocalDate date, long userId) {
         if (isKnownUser(userName)) {
             return jdbcTemplate.update("UPDATE timetable SET date_of_change=? WHERE user_name=?",
                     date,
                     userName
             );
         } else {
-            return jdbcTemplate.update("INSERT INTO timetable (user_name, date_of_change) VALUES (?, ?)",
+            return jdbcTemplate.update("INSERT INTO timetable (user_name, date_of_change, user_id) VALUES (?, ?, ?)",
                     userName,
-                    date
+                    date,
+                    userId
             );
         }
 
+    }
+
+    /**
+     * Получает список пользователей для отправки уведомлений о необходимости замены фильтров
+     */
+    public List<Long> getUsersToNotify() {
+        return jdbcTemplate.queryForList(
+                        "SELECT user_id FROM timetable WHERE date_of_change<=?",
+                        Long.class,
+                        LocalDate.now().minusYears(1L)
+                );
     }
 }
