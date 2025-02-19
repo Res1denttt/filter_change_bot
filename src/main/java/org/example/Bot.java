@@ -52,7 +52,6 @@ public class Bot extends TelegramLongPollingBot {
             Long userId = getUserId(message, update);
             String response = getResponse(userName, message, command, userId);
             sendMenu(userId, response, keyboard);
-            sendNotification(filterService.checkUsersToNotify());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -127,7 +126,8 @@ public class Bot extends TelegramLongPollingBot {
         }
     }
 
-    private void sendNotification(List<Long> who) {
+    public void sendNotification() {
+        List<Long> who = filterService.checkUsersToNotify();
         if(!who.isEmpty()){
             for(long user : who){
                 sendText(user, "Настало время заменить фильтры");
